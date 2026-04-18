@@ -1,8 +1,15 @@
-import { createClient } from "./server";
+import { createClient as createServerClient } from "@supabase/supabase-js";
 import type { Category, Product, SeoMeta } from "@/types";
 
+function getClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) throw new Error("Supabase not configured");
+  return createServerClient(url, key);
+}
+
 export async function getCategories(locale = "ru"): Promise<Category[]> {
-  const supabase = await createClient();
+  const supabase = getClient();
   const { data: categories } = await supabase
     .from("categories")
     .select("*")
@@ -33,7 +40,7 @@ export async function getCategories(locale = "ru"): Promise<Category[]> {
 }
 
 export async function getCategoryBySlug(slug: string, locale = "ru"): Promise<Category | null> {
-  const supabase = await createClient();
+  const supabase = getClient();
   const { data: category } = await supabase
     .from("categories")
     .select("*")
@@ -57,7 +64,7 @@ export async function getCategoryBySlug(slug: string, locale = "ru"): Promise<Ca
 }
 
 export async function getProducts(categoryId?: string, locale = "ru"): Promise<Product[]> {
-  const supabase = await createClient();
+  const supabase = getClient();
   let query = supabase.from("products").select("*").eq("is_active", true);
   if (categoryId) query = query.eq("category_id", categoryId);
 
@@ -86,7 +93,7 @@ export async function getProducts(categoryId?: string, locale = "ru"): Promise<P
 }
 
 export async function getProductBySlug(slug: string, locale = "ru"): Promise<Product | null> {
-  const supabase = await createClient();
+  const supabase = getClient();
   const { data: product } = await supabase
     .from("products")
     .select("*, category:categories(*)")
@@ -110,7 +117,7 @@ export async function getProductBySlug(slug: string, locale = "ru"): Promise<Pro
 }
 
 export async function getFeaturedProducts(locale = "ru", limit = 6): Promise<Product[]> {
-  const supabase = await createClient();
+  const supabase = getClient();
   const { data: products } = await supabase
     .from("products")
     .select("*")
@@ -146,7 +153,7 @@ export async function getSeoMeta(
   entityId: string,
   locale = "ru"
 ): Promise<SeoMeta | null> {
-  const supabase = await createClient();
+  const supabase = getClient();
   const { data } = await supabase
     .from("seo_meta")
     .select("*")
@@ -158,7 +165,7 @@ export async function getSeoMeta(
 }
 
 export async function searchProducts(query: string, locale = "ru"): Promise<Product[]> {
-  const supabase = await createClient();
+  const supabase = getClient();
   const { data: translations } = await supabase
     .from("translations")
     .select("entity_id, field, value")
@@ -185,13 +192,13 @@ export async function searchProducts(query: string, locale = "ru"): Promise<Prod
 }
 
 export async function getAllProductSlugs(): Promise<string[]> {
-  const supabase = await createClient();
+  const supabase = getClient();
   const { data } = await supabase.from("products").select("slug").eq("is_active", true);
   return data?.map((p) => p.slug) ?? [];
 }
 
 export async function getAllCategorySlugs(): Promise<string[]> {
-  const supabase = await createClient();
+  const supabase = getClient();
   const { data } = await supabase.from("categories").select("slug").eq("is_active", true);
   return data?.map((c) => c.slug) ?? [];
 }

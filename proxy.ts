@@ -15,6 +15,8 @@ export function proxy(request: NextRequest) {
       new URL(`/${defaultLocale}${pathname}`, request.url)
     );
   }
+
+  return NextResponse.next();
 }
 
 export const config = {
