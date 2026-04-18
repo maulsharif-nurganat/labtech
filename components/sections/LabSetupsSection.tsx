@@ -144,28 +144,34 @@ export default function LabSetupsSection({ locale }: { locale: string }) {
                   {items.map((item, i) => (
                     <tr
                       key={i}
-                      style={{
-                        borderBottom: "1px solid var(--silver)",
-                      }}
+                      style={{ borderBottom: "1px solid var(--silver)" }}
                     >
                       <td
                         style={{
                           padding: "10px 0",
                           fontSize: 13,
-                          color: "var(--ink)",
                           lineHeight: 1.5,
                           width: "100%",
                         }}
                       >
-                        {item.name}
-                        {item.note && (
-                          <span
+                        {item.catalogSlug ? (
+                          <Link
+                            href={`/${locale}/catalog/${item.catalogSlug}`}
                             style={{
-                              fontSize: 11,
-                              color: "var(--gray)",
-                              marginLeft: 8,
+                              color: "var(--blue)",
+                              textDecoration: "none",
+                              fontWeight: 500,
+                              borderBottom: "1px dashed var(--blue)",
+                              paddingBottom: 1,
                             }}
                           >
+                            {item.name}
+                          </Link>
+                        ) : (
+                          <span style={{ color: "var(--ink)" }}>{item.name}</span>
+                        )}
+                        {item.note && (
+                          <span style={{ fontSize: 11, color: "var(--gray)", marginLeft: 8 }}>
                             ({item.note})
                           </span>
                         )}
