@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "labtech.kz" },
     ],
   },
+  async redirects() {
+    return [
+      { source: "/", destination: "/ru", permanent: false },
+    ];
+  },
 };
 
 export default withNextIntl(nextConfig);
