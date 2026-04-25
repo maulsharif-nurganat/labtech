@@ -1,18 +1,22 @@
 import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
-import { getCategoryBySlug, getProducts, getCategories, getAllCategorySlugs } from "@/lib/supabase/queries";
+import { getCategoryBySlug, getProducts, getAllCategorySlugs } from "@/lib/supabase/queries";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import ProductCard from "@/components/catalog/ProductCard";
 import CategoryTree from "@/components/catalog/CategoryTree";
+import CATEGORIES from "@/data/categoryTree";
 
 export async function generateStaticParams() {
   const locales = routing.locales;
+  // Always include hardcoded category slugs (both parents and subcategories)
+  const hardcodedSlugs = CATEGORIES.map((c) => c.slug);
   try {
-    const slugs = await getAllCategorySlugs();
-    return locales.flatMap((locale) => slugs.map((category) => ({ locale, category })));
+    const dbSlugs = await getAllCategorySlugs();
+    const allSlugs = Array.from(new Set([...hardcodedSlugs, ...dbSlugs]));
+    return locales.flatMap((locale) => allSlugs.map((category) => ({ locale, category })));
   } catch {
-    return locales.map((locale) => ({ locale, category: "all" }));
+    return locales.flatMap((locale) => hardcodedSlugs.map((category) => ({ locale, category })));
   }
 }
 
@@ -69,21 +73,17 @@ export default async function CategoryPage({
 
   let categoryData: any = null;
   let products: any[] = MOCK_PRODUCTS;
-  let allCategories: any[] = MOCK_CATEGORIES;
 
   try {
-    [categoryData, allCategories] = await Promise.all([
-      getCategoryBySlug(category, locale),
-      getCategories(locale),
-    ]);
-    if (allCategories.length === 0) allCategories = MOCK_CATEGORIES;
+    categoryData = await getCategoryBySlug(category, locale);
     if (categoryData) {
       const fetched = await getProducts(categoryData.id, locale);
       if (fetched.length > 0) products = fetched;
     }
   } catch {}
 
-  const mockCat = MOCK_CATEGORIES.find((c) => c.slug === category);
+  const mockCat = MOCK_CATEGORIES.find((c) => c.slug === category)
+    ?? CATEGORIES.find((c) => c.slug === category);
   const catName = categoryData?.name ?? mockCat?.name ?? category;
 
   return (
@@ -101,7 +101,7 @@ export default async function CategoryPage({
             <div style={{ fontSize: 11, fontWeight: 700, color: "var(--gray)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12 }}>
               {t("catalog.all_categories")}
             </div>
-            <CategoryTree categories={allCategories} activeSlug={category} />
+            <CategoryTree categories={CATEGORIES as any} activeSlug={category} />
           </aside>
 
           {/* Main */}

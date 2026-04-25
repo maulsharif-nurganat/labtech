@@ -5,21 +5,10 @@ import { getCategories } from "@/lib/supabase/queries";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import CategoryCard from "@/components/catalog/CategoryCard";
 import CategoryTree from "@/components/catalog/CategoryTree";
+import CATEGORIES from "@/data/categoryTree";
 
-const MOCK_CATEGORIES = [
-  { id: "1", slug: "kliniko-diagnosticheskaya", name: "Клинико-диагностическая лаборатория", parent_id: null, image_url: null, sort_order: 1, is_active: true, created_at: "" },
-  { id: "2", slug: "mikroskopy", name: "Микроскопы", parent_id: null, image_url: null, sort_order: 2, is_active: true, created_at: "" },
-  { id: "3", slug: "obshchelaboratornoe", name: "Общелабораторное оборудование", parent_id: null, image_url: null, sort_order: 3, is_active: true, created_at: "" },
-  { id: "4", slug: "reagenty", name: "Реагенты и красители", parent_id: null, image_url: null, sort_order: 4, is_active: true, created_at: "" },
-  { id: "5", slug: "veterinariya", name: "Ветеринария", parent_id: null, image_url: null, sort_order: 5, is_active: true, created_at: "" },
-  { id: "6", slug: "chistye-pomeshcheniya", name: "Чистые помещения", parent_id: null, image_url: null, sort_order: 6, is_active: true, created_at: "" },
-  { id: "7", slug: "laboratornaya-posuda", name: "Лабораторная посуда", parent_id: null, image_url: null, sort_order: 7, is_active: true, created_at: "" },
-  { id: "8", slug: "nebulayizery", name: "Небулайзеры", parent_id: null, image_url: null, sort_order: 8, is_active: true, created_at: "" },
-  { id: "9", slug: "tonomety", name: "Тонометры", parent_id: null, image_url: null, sort_order: 9, is_active: true, created_at: "" },
-  { id: "10", slug: "diagnostika-diabeta", name: "Диагностика диабета", parent_id: null, image_url: null, sort_order: 10, is_active: true, created_at: "" },
-  { id: "11", slug: "biokhimicheskaya-laboratoriya", name: "Биохимическая лаборатория", parent_id: null, image_url: null, sort_order: 11, is_active: true, created_at: "" },
-  { id: "12", slug: "sumki-kholodilniki", name: "Сумки-холодильники", parent_id: null, image_url: null, sort_order: 12, is_active: true, created_at: "" },
-];
+// Top-level categories only — for the cards grid
+const TOP_LEVEL = CATEGORIES.filter((c) => c.parent_id === null);
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -52,10 +41,11 @@ export default async function CatalogPage({
   setRequestLocale(locale);
   const t = await getTranslations({ locale });
 
-  let categories: any[] = MOCK_CATEGORIES;
+  // Try Supabase first; fall back to hardcoded tree for the cards grid
+  let gridCategories: any[] = TOP_LEVEL;
   try {
     const fetched = await getCategories(locale);
-    if (fetched.length > 0) categories = fetched;
+    if (fetched.length > 0) gridCategories = fetched.filter((c: any) => !c.parent_id);
   } catch {}
 
   return (
@@ -70,17 +60,17 @@ export default async function CatalogPage({
         </p>
 
         <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: 40 }} className="catalog-layout">
-          {/* Sidebar */}
+          {/* Sidebar — always uses full hardcoded tree */}
           <aside>
             <div style={{ fontSize: 11, fontWeight: 700, color: "var(--gray)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12 }}>
               {t("catalog.all_categories")}
             </div>
-            <CategoryTree categories={categories} />
+            <CategoryTree categories={CATEGORIES as any} />
           </aside>
 
-          {/* Grid */}
+          {/* Cards grid */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 2 }}>
-            {categories.map((cat: any) => (
+            {gridCategories.map((cat: any) => (
               <CategoryCard key={cat.id} category={cat} />
             ))}
           </div>

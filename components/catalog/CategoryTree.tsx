@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useLocale } from "next-intl";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { Plus, Minus } from "lucide-react";
 import type { Category } from "@/types";
 
 interface CategoryTreeProps {
@@ -12,12 +12,12 @@ interface CategoryTreeProps {
 }
 
 function buildTree(cats: Category[]): Category[] {
-  const map: Record<string, Category> = {};
-  const roots: Category[] = [];
+  const map: Record<string, Category & { children: Category[] }> = {};
+  const roots: (Category & { children: Category[] })[] = [];
   cats.forEach((c) => { map[c.id] = { ...c, children: [] }; });
   cats.forEach((c) => {
     if (c.parent_id && map[c.parent_id]) {
-      map[c.parent_id].children!.push(map[c.id]);
+      map[c.parent_id].children.push(map[c.id]);
     } else {
       roots.push(map[c.id]);
     }
@@ -25,28 +25,38 @@ function buildTree(cats: Category[]): Category[] {
   return roots;
 }
 
-function TreeNode({ node, activeSlug, depth = 0 }: { node: Category; activeSlug?: string; depth?: number }) {
+function TreeNode({
+  node,
+  activeSlug,
+  depth = 0,
+}: {
+  node: Category & { children?: Category[] };
+  activeSlug?: string;
+  depth?: number;
+}) {
   const locale = useLocale();
   const hasChildren = node.children && node.children.length > 0;
   const isActive = node.slug === activeSlug;
-  const [open, setOpen] = useState(isActive || node.children?.some((c) => c.slug === activeSlug) || false);
+  const [open, setOpen] = useState(
+    isActive || node.children?.some((c) => c.slug === activeSlug) || false
+  );
 
   return (
-    <div>
-      <div style={{ display: "flex", alignItems: "center", paddingLeft: depth * 12 }}>
+    <div style={{ borderBottom: "1px solid #e8e8e8" }}>
+      <div style={{ display: "flex", alignItems: "stretch" }}>
         <Link
           href={`/${locale}/catalog/${node.slug}`}
           style={{
             flex: 1,
             display: "block",
-            padding: "8px 0",
-            fontSize: 13,
-            fontWeight: isActive ? 700 : 500,
-            color: isActive ? "var(--blue)" : "var(--ink)",
+            padding: depth === 0 ? "11px 16px" : "9px 16px",
+            paddingLeft: depth === 0 ? 16 : 32,
+            fontSize: depth === 0 ? 14 : 13,
+            fontWeight: isActive ? 700 : depth === 0 ? 500 : 400,
+            color: isActive ? "var(--blue)" : depth === 0 ? "var(--ink)" : "#555",
             textDecoration: "none",
-            borderLeft: isActive ? "2px solid var(--blue)" : "2px solid transparent",
-            paddingLeft: 12,
-            transition: "color 0.15s",
+            background: isActive ? "rgba(0,82,204,0.05)" : "transparent",
+            lineHeight: 1.35,
           }}
         >
           {node.name ?? node.slug}
@@ -54,15 +64,26 @@ function TreeNode({ node, activeSlug, depth = 0 }: { node: Category; activeSlug?
         {hasChildren && (
           <button
             onClick={() => setOpen(!open)}
-            style={{ background: "none", border: "none", cursor: "pointer", color: "var(--gray)", padding: 4 }}
+            aria-label={open ? "Свернуть" : "Развернуть"}
+            style={{
+              background: "none",
+              border: "none",
+              borderLeft: "1px solid #e8e8e8",
+              cursor: "pointer",
+              color: "var(--gray)",
+              padding: "0 14px",
+              display: "flex",
+              alignItems: "center",
+              flexShrink: 0,
+            }}
           >
-            {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            {open ? <Minus size={12} /> : <Plus size={12} />}
           </button>
         )}
       </div>
       {hasChildren && open && (
-        <div>
-          {node.children!.map((child) => (
+        <div style={{ background: "#fafafa" }}>
+          {(node.children as (Category & { children?: Category[] })[]).map((child) => (
             <TreeNode key={child.id} node={child} activeSlug={activeSlug} depth={depth + 1} />
           ))}
         </div>
@@ -72,10 +93,10 @@ function TreeNode({ node, activeSlug, depth = 0 }: { node: Category; activeSlug?
 }
 
 export default function CategoryTree({ categories, activeSlug }: CategoryTreeProps) {
-  const tree = buildTree(categories);
+  const tree = buildTree(categories) as (Category & { children?: Category[] })[];
 
   return (
-    <div style={{ border: "1px solid var(--border)", padding: "4px 0" }}>
+    <div style={{ border: "1px solid #e8e8e8", background: "white" }}>
       {tree.map((node) => (
         <TreeNode key={node.id} node={node} activeSlug={activeSlug} />
       ))}
