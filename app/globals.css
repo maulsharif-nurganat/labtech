@@ -193,3 +193,7 @@ body {
 .client-logo-link:hover img {
   filter: grayscale(0%) !important;
 }
+
+.partner-card-link:hover > div {
+  background: #e8edf2;
+}

@@ -3,7 +3,6 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import ContactSection from "@/components/sections/ContactSection";
-import PartnerCard from "@/components/catalog/PartnerCard";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -21,33 +20,33 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 const PARTNERS = [
-  { name: "URIT",                url: "https://urit.com.ru/",                        domain: "urit.com.ru" },
-  { name: "ELMI",                url: "https://elmi-tech.com/ru/",                   domain: "elmi-tech.com" },
-  { name: "Biobase",             url: "https://www.biobase.cc/",                     domain: "biobase.cc" },
-  { name: "Biosan",              url: "https://biosan.lv/ru/",                       domain: "biosan.lv" },
-  { name: "ДНК Технология",      url: "https://dna-technology.ru/",                  domain: "dna-technology.ru" },
-  { name: "West Medica",         url: "https://westmedica.ru/",                      domain: "westmedica.ru" },
-  { name: "Fujirebio",           url: "https://www.fujirebio.com/en-us",             domain: "fujirebio.com" },
-  { name: "Sinocare",            url: "https://www.sinocare.com/ru/index.html",      domain: "sinocare.com" },
-  { name: "Osang Healthcare",    url: "https://www.osanghc.com/en/main",             domain: "osanghc.com" },
-  { name: "Zonkia",              url: "http://zonkia-lab.com/",                      domain: "zonkia-lab.com" },
-  { name: "Biologix",            url: "https://ru.biologix-global.com/",             domain: "biologix-global.com" },
-  { name: "Viola Медтехніка",    url: "https://viola.net.ua",                        domain: "viola.net.ua" },
-  { name: "НПФ Арбис",           url: "https://www.abrisplus.ru/",                   domain: "abrisplus.ru" },
-  { name: "МиниМед",             url: "https://minimed.ru/",                         domain: "minimed.ru" },
-  { name: "Полимерные изделия",  url: "https://www.polimizd.ru/",                    domain: "polimizd.ru" },
-  { name: "Иммунотех",           url: "https://msk097.wixsite.com/immunotex",        domain: "immunotex.ru" },
-  { name: "Агродиагностика",     url: "https://agrodiagnostica.com/",                domain: "agrodiagnostica.com" },
-  { name: "Бирюза",              url: "https://biryuza-med.com/",                    domain: "biryuza-med.com" },
-  { name: "VetDiagnostix",       url: "https://www.vet-diagnostix.com/",             domain: "vet-diagnostix.com" },
-  { name: "HealVet",             url: "https://www.healfo.com/",                     domain: "healfo.com" },
-  { name: "Seamaty",             url: "https://seamaty-russia.com/",                 domain: "seamaty-russia.com" },
-  { name: "Dlab",                url: "https://www.dlabsci.com/",                    domain: "dlabsci.com" },
-  { name: "Yuwell",              url: "https://www.yuwell.com/",                     domain: "yuwell.com" },
-  { name: "Альфалаб",            url: "https://www.alphalabs.ru/",                   domain: "alphalabs.ru" },
-  { name: "Сункар",              url: "https://densaulyk.kz",                        domain: "densaulyk.kz" },
-  { name: "МКС",                 url: "https://mcs.kz",                              domain: "mcs.kz" },
-  { name: "Добровет",            url: "https://dobrovet.kz",                         domain: "dobrovet.kz" },
+  { name: "URIT Medical",         country: "Китай",      category: "Гематология, биохимия",              url: "https://urit.com.ru/" },
+  { name: "HUMAN Diagnostics",    country: "Германия",   category: "Биохимические реагенты",             url: "https://www.human.de/" },
+  { name: "DNA-Technology",       country: "Россия",     category: "ПЦР-оборудование",                   url: "https://dna-technology.ru/" },
+  { name: "Biobase",              country: "Китай",      category: "Боксы биологической безопасности",   url: "https://www.biobase.cc/" },
+  { name: "ELMI",                 country: "Латвия",     category: "Центрифуги и термостаты",            url: "https://elmi-tech.com/ru/" },
+  { name: "Biosan",               country: "Латвия",     category: "Лабораторное оборудование",          url: "https://biosan.lv/ru/" },
+  { name: "Fujirebio",            country: "Швеция",     category: "ИФА-диагностика",                    url: "https://www.fujirebio.com/" },
+  { name: "West Medica",          country: "Австрия",    category: "Микроскопы",                         url: "https://westmedica.ru/" },
+  { name: "Immunotech",           country: "Россия",     category: "Иммунологические реагенты",          url: "https://msk097.wixsite.com/immunotex" },
+  { name: "SteriLance",           country: "Китай",      category: "Ланцеты и расходники",               url: "" },
+  { name: "Sinocare",             country: "Китай",      category: "Диагностика диабета",                url: "https://www.sinocare.com/ru/" },
+  { name: "Osang Healthcare",     country: "Корея",      category: "Экспресс-тесты",                     url: "https://www.osanghc.com/" },
+  { name: "Zonkia",               country: "Китай",      category: "Лабораторная посуда",                url: "http://zonkia-lab.com/" },
+  { name: "Biologix",             country: "Китай",      category: "Расходные материалы",                url: "https://ru.biologix-global.com/" },
+  { name: "Viola Медтехника",     country: "Украина",    category: "Медицинское оборудование",           url: "https://viola.net.ua" },
+  { name: "НПФ Арбис",            country: "Россия",     category: "Реагенты и красители",               url: "https://www.abrisplus.ru/" },
+  { name: "МиниМед",              country: "Россия",     category: "Небулайзеры, тонометры",             url: "https://minimed.ru/" },
+  { name: "Агродиагностика",      country: "Россия",     category: "Ветеринарная диагностика",           url: "https://agrodiagnostica.com/" },
+  { name: "VetDiagnostix",        country: "Германия",   category: "Ветеринарное оборудование",          url: "https://www.vet-diagnostix.com/" },
+  { name: "HealVet",              country: "Китай",      category: "Ветеринарные анализаторы",           url: "https://www.healfo.com/" },
+  { name: "Seamaty",              country: "Китай",      category: "Биохимия, иммунология",              url: "https://seamaty-russia.com/" },
+  { name: "Dlab",                 country: "Китай",      category: "Дозирующее оборудование",            url: "https://www.dlabsci.com/" },
+  { name: "Yuwell",               country: "Китай",      category: "Небулайзеры, тонометры",             url: "https://www.yuwell.com/" },
+  { name: "Альфалаб",             country: "Россия",     category: "Расходные материалы",                url: "https://www.alphalabs.ru/" },
+  { name: "Бирюза",               country: "Казахстан",  category: "Дезинфицирующие средства",           url: "https://biryuza-med.com/" },
+  { name: "Сункар",               country: "Казахстан",  category: "Ветеринарные препараты",             url: "https://densaulyk.kz" },
+  { name: "Добровет",             country: "Казахстан",  category: "Ветеринарные препараты",             url: "https://dobrovet.kz" },
 ];
 
 export default async function PartnersPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -90,10 +89,31 @@ export default async function PartnersPage({ params }: { params: Promise<{ local
       {/* Partners grid */}
       <section style={{ padding: "80px 56px" }} className="px-5 md:px-14">
         <div style={{ maxWidth: 1400, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 12 }}>
-            {PARTNERS.map((p) => (
-              <PartnerCard key={p.name} name={p.name} url={p.url} domain={p.domain} />
-            ))}
+          <div style={{ fontSize: 11, fontWeight: 700, color: "var(--blue)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 12 }}>
+            {t("partners.tag")}
+          </div>
+          <h2 style={{ fontFamily: "var(--font-cactus), 'Cactus Classical Serif', serif", fontSize: "clamp(24px, 3vw, 36px)", fontWeight: 700, color: "var(--ink)", marginBottom: 48 }}>
+            {t("partners.grid_title")}
+          </h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 2 }}>
+            {PARTNERS.map((p) => {
+              const card = (
+                <div style={{ background: "var(--silver)", padding: "24px", borderLeft: "3px solid var(--blue)", height: "100%" }}>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: "var(--ink)", marginBottom: 6 }}>{p.name}</div>
+                  <div style={{ fontSize: 11, color: "var(--blue)", fontWeight: 600, marginBottom: 8 }}>{p.country}</div>
+                  <div style={{ fontSize: 12, color: "var(--gray)" }}>{p.category}</div>
+                </div>
+              );
+              return p.url ? (
+                <a key={p.name} href={p.url} target="_blank" rel="noopener noreferrer"
+                  style={{ textDecoration: "none", color: "inherit", display: "block", transition: "opacity 0.2s" }}
+                  className="partner-card-link">
+                  {card}
+                </a>
+              ) : (
+                <div key={p.name}>{card}</div>
+              );
+            })}
           </div>
         </div>
       </section>
