@@ -12,7 +12,7 @@ export const PARTNERS = [
   { name: "Immunotech",           country: "Россия",     category: "Иммунологические реагенты",          url: "https://msk097.wixsite.com/immunotex",       logo: `${CDN}/immunotech.png` },
   { name: "SteriLance",           country: "Китай",      category: "Ланцеты и расходники",               url: "",                                           logo: "" },
   { name: "Sinocare",             country: "Китай",      category: "Диагностика диабета",                url: "https://www.sinocare.com/ru/",               logo: `${CDN}/sinocare.png` },
-  { name: "Osang Healthcare",     country: "Корея",      category: "Экспресс-тесты",                     url: "https://www.osanghc.com/",                   logo: `${CDN}/osang.svg` },
+  { name: "Osang Healthcare",     country: "Корея",      category: "Экспресс-тесты",                     url: "https://www.osanghc.com/",                   logo: `${CDN}/osang.jpg` },
   { name: "Zonkia",               country: "Китай",      category: "Лабораторная посуда",                url: "http://zonkia-lab.com/",                     logo: `${CDN}/zonkia.png` },
   { name: "Biologix",             country: "Китай",      category: "Расходные материалы",                url: "https://ru.biologix-global.com/",            logo: `${CDN}/biologix.png` },
   { name: "Viola Медтехника",     country: "Украина",    category: "Медицинское оборудование",           url: "https://viola.net.ua",                       logo: `${CDN}/viola.png` },
