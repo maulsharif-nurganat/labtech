@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { getCategoryBySlug, getProducts, getAllCategorySlugs } from "@/lib/supabase/queries";
+import { SITE_URL } from "@/lib/siteUrl";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import ProductCard from "@/components/catalog/ProductCard";
 import CategoryCard from "@/components/catalog/CategoryCard";
@@ -38,7 +39,7 @@ export async function generateMetadata({
     return {
       title: name,
       description: `Купить ${name} в Казахстане. LabTech — официальный дистрибьютор.`,
-      alternates: { canonical: `https://labtech.kz/${locale}/catalog/${category}` },
+      alternates: { canonical: `${SITE_URL}/${locale}/catalog/${category}` },
     };
   } catch {
     return { title: `Каталог | LabTech` };

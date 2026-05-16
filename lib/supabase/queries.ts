@@ -1,45 +1,63 @@
 import { createClient as createServerClient } from "@supabase/supabase-js";
+import { unstable_cache } from "next/cache";
 import type { Category, Product, SeoMeta } from "@/types";
 
+// ── Singleton client (one instance per server process) ─────────────────────
+let _client: ReturnType<typeof createServerClient> | null = null;
 function getClient() {
+  if (_client) return _client;
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) throw new Error("Supabase not configured");
-  return createServerClient(url, key);
+  _client = createServerClient(url, key);
+  return _client;
 }
 
-export async function getCategories(locale = "ru"): Promise<Category[]> {
-  const supabase = getClient();
-  const { data: categories } = await supabase
-    .from("categories")
-    .select("*")
-    .eq("is_active", true)
-    .order("sort_order");
+// ── Cache TTL: 60 seconds ──────────────────────────────────────────────────
+const TTL = 60;
 
-  if (!categories) return [];
-
-  const ids = categories.map((c) => c.id);
-  const { data: translations } = await supabase
-    .from("translations")
-    .select("entity_id, field, value")
-    .eq("entity_type", "category")
-    .eq("locale", locale)
-    .in("entity_id", ids);
-
-  const transMap: Record<string, Record<string, string>> = {};
-  translations?.forEach(({ entity_id, field, value }) => {
-    if (!transMap[entity_id]) transMap[entity_id] = {};
-    transMap[entity_id][field] = value;
+// ── Shared translation helpers ─────────────────────────────────────────────
+type TransRow = { entity_id: string; field: string; value: string };
+function buildTransMap(rows: TransRow[] | null): Record<string, Record<string, string>> {
+  const map: Record<string, Record<string, string>> = {};
+  rows?.forEach(({ entity_id, field, value }) => {
+    if (!map[entity_id]) map[entity_id] = {};
+    map[entity_id][field] = value;
   });
+  return map;
+}
 
-  return categories.map((c) => ({
+// ── Categories ─────────────────────────────────────────────────────────────
+async function _getCategories(locale: string): Promise<Category[]> {
+  const supabase = getClient();
+
+  const [catRes, transRes] = await Promise.all([
+    supabase.from("categories").select("*").eq("is_active", true).order("sort_order"),
+    supabase
+      .from("translations")
+      .select("entity_id, field, value")
+      .eq("entity_type", "category")
+      .eq("locale", locale),
+  ]);
+
+  const categories = (catRes.data ?? []) as any[];
+  const transMap = buildTransMap((transRes.data ?? []) as TransRow[]);
+
+  return categories.map((c: any) => ({
     ...c,
     name: transMap[c.id]?.name ?? c.slug,
     description: transMap[c.id]?.description ?? "",
   }));
 }
 
-export async function getCategoryBySlug(slug: string, locale = "ru"): Promise<Category | null> {
+export const getCategories = unstable_cache(
+  _getCategories,
+  ["categories"],
+  { revalidate: TTL, tags: ["categories"] }
+);
+
+// ── Category by slug ────────────────────────────────────────────────────────
+async function _getCategoryBySlug(slug: string, locale: string): Promise<Category | null> {
   const supabase = getClient();
   const { data: category } = await supabase
     .from("categories")
@@ -54,24 +72,31 @@ export async function getCategoryBySlug(slug: string, locale = "ru"): Promise<Ca
     .from("translations")
     .select("field, value")
     .eq("entity_type", "category")
-    .eq("entity_id", category.id)
+    .eq("entity_id", (category as any).id)
     .eq("locale", locale);
 
   const trans: Record<string, string> = {};
-  translations?.forEach(({ field, value }) => { trans[field] = value; });
+  (translations as any[] ?? []).forEach(({ field, value }: any) => { trans[field] = value; });
 
-  return { ...category, name: trans.name ?? category.slug, description: trans.description ?? "" };
+  return { ...(category as any), name: trans.name ?? (category as any).slug, description: trans.description ?? "" };
 }
 
-export async function getProducts(categoryId?: string, locale = "ru"): Promise<Product[]> {
+export const getCategoryBySlug = unstable_cache(
+  _getCategoryBySlug,
+  ["category-by-slug"],
+  { revalidate: TTL, tags: ["categories"] }
+);
+
+// ── Products ────────────────────────────────────────────────────────────────
+async function _getProducts(categoryId: string | undefined, locale: string): Promise<Product[]> {
   const supabase = getClient();
-  let query = supabase.from("products").select("*").eq("is_active", true);
+  let query = supabase.from("products").select("*").eq("is_active", true) as any;
   if (categoryId) query = query.eq("category_id", categoryId);
 
   const { data: products } = await query.order("created_at", { ascending: false });
-  if (!products) return [];
+  if (!products || (products as any[]).length === 0) return [];
 
-  const ids = products.map((p) => p.id);
+  const ids = (products as any[]).map((p: any) => p.id);
   const { data: translations } = await supabase
     .from("translations")
     .select("entity_id, field, value")
@@ -79,20 +104,23 @@ export async function getProducts(categoryId?: string, locale = "ru"): Promise<P
     .eq("locale", locale)
     .in("entity_id", ids);
 
-  const transMap: Record<string, Record<string, string>> = {};
-  translations?.forEach(({ entity_id, field, value }) => {
-    if (!transMap[entity_id]) transMap[entity_id] = {};
-    transMap[entity_id][field] = value;
-  });
+  const transMap = buildTransMap((translations ?? []) as TransRow[]);
 
-  return products.map((p) => ({
+  return (products as any[]).map((p: any) => ({
     ...p,
     name: transMap[p.id]?.name ?? p.slug,
     description: transMap[p.id]?.description ?? "",
   }));
 }
 
-export async function getProductBySlug(slug: string, locale = "ru"): Promise<Product | null> {
+export const getProducts = unstable_cache(
+  _getProducts,
+  ["products"],
+  { revalidate: TTL, tags: ["products"] }
+);
+
+// ── Product by slug ─────────────────────────────────────────────────────────
+async function _getProductBySlug(slug: string, locale: string): Promise<Product | null> {
   const supabase = getClient();
   const { data: product } = await supabase
     .from("products")
@@ -107,16 +135,23 @@ export async function getProductBySlug(slug: string, locale = "ru"): Promise<Pro
     .from("translations")
     .select("field, value")
     .eq("entity_type", "product")
-    .eq("entity_id", product.id)
+    .eq("entity_id", (product as any).id)
     .eq("locale", locale);
 
   const trans: Record<string, string> = {};
-  translations?.forEach(({ field, value }) => { trans[field] = value; });
+  (translations as any[] ?? []).forEach(({ field, value }: any) => { trans[field] = value; });
 
-  return { ...product, name: trans.name ?? product.slug, description: trans.description ?? "" };
+  return { ...(product as any), name: trans.name ?? (product as any).slug, description: trans.description ?? "" };
 }
 
-export async function getFeaturedProducts(locale = "ru", limit = 6): Promise<Product[]> {
+export const getProductBySlug = unstable_cache(
+  _getProductBySlug,
+  ["product-by-slug"],
+  { revalidate: TTL, tags: ["products"] }
+);
+
+// ── Featured products ───────────────────────────────────────────────────────
+async function _getFeaturedProducts(locale: string, limit: number): Promise<Product[]> {
   const supabase = getClient();
   const { data: products } = await supabase
     .from("products")
@@ -125,9 +160,9 @@ export async function getFeaturedProducts(locale = "ru", limit = 6): Promise<Pro
     .eq("is_active", true)
     .limit(limit);
 
-  if (!products) return [];
+  if (!products || (products as any[]).length === 0) return [];
 
-  const ids = products.map((p) => p.id);
+  const ids = (products as any[]).map((p: any) => p.id);
   const { data: translations } = await supabase
     .from("translations")
     .select("entity_id, field, value")
@@ -135,19 +170,22 @@ export async function getFeaturedProducts(locale = "ru", limit = 6): Promise<Pro
     .eq("locale", locale)
     .in("entity_id", ids);
 
-  const transMap: Record<string, Record<string, string>> = {};
-  translations?.forEach(({ entity_id, field, value }) => {
-    if (!transMap[entity_id]) transMap[entity_id] = {};
-    transMap[entity_id][field] = value;
-  });
+  const transMap = buildTransMap((translations ?? []) as TransRow[]);
 
-  return products.map((p) => ({
+  return (products as any[]).map((p: any) => ({
     ...p,
     name: transMap[p.id]?.name ?? p.slug,
     description: transMap[p.id]?.description ?? "",
   }));
 }
 
+export const getFeaturedProducts = unstable_cache(
+  _getFeaturedProducts,
+  ["featured-products"],
+  { revalidate: TTL, tags: ["products"] }
+);
+
+// ── SEO Meta ────────────────────────────────────────────────────────────────
 export async function getSeoMeta(
   entityType: string,
   entityId: string,
@@ -161,9 +199,10 @@ export async function getSeoMeta(
     .eq("entity_id", entityId)
     .eq("locale", locale)
     .single();
-  return data ?? null;
+  return (data as any) ?? null;
 }
 
+// ── Search ──────────────────────────────────────────────────────────────────
 export async function searchProducts(query: string, locale = "ru"): Promise<Product[]> {
   const supabase = getClient();
   const { data: translations } = await supabase
@@ -174,9 +213,9 @@ export async function searchProducts(query: string, locale = "ru"): Promise<Prod
     .eq("field", "name")
     .ilike("value", `%${query}%`);
 
-  if (!translations?.length) return [];
+  if (!(translations as any[])?.length) return [];
 
-  const ids = translations.map((t) => t.entity_id);
+  const ids = (translations as any[]).map((t: any) => t.entity_id);
   const { data: products } = await supabase
     .from("products")
     .select("*")
@@ -186,19 +225,20 @@ export async function searchProducts(query: string, locale = "ru"): Promise<Prod
   if (!products) return [];
 
   const transMap: Record<string, string> = {};
-  translations.forEach(({ entity_id, value }) => { transMap[entity_id] = value; });
+  (translations as any[]).forEach(({ entity_id, value }: any) => { transMap[entity_id] = value; });
 
-  return products.map((p) => ({ ...p, name: transMap[p.id] ?? p.slug }));
+  return (products as any[]).map((p: any) => ({ ...p, name: transMap[p.id] ?? p.slug }));
 }
 
+// ── Slug helpers ────────────────────────────────────────────────────────────
 export async function getAllProductSlugs(): Promise<string[]> {
   const supabase = getClient();
   const { data } = await supabase.from("products").select("slug").eq("is_active", true);
-  return data?.map((p) => p.slug) ?? [];
+  return (data as any[])?.map((p: any) => p.slug) ?? [];
 }
 
 export async function getAllCategorySlugs(): Promise<string[]> {
   const supabase = getClient();
   const { data } = await supabase.from("categories").select("slug").eq("is_active", true);
-  return data?.map((c) => c.slug) ?? [];
+  return (data as any[])?.map((c: any) => c.slug) ?? [];
 }

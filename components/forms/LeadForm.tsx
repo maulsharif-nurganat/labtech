@@ -94,12 +94,12 @@ export default function LeadForm({ productId, productName, onSuccess }: LeadForm
       <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         <div>
           <label style={labelStyle}>{t("name_label")} *</label>
-          <input {...register("name")} placeholder={t("name_placeholder")} style={inputStyle} />
+          <input {...register("name")} placeholder={t("name_placeholder")} style={inputStyle} required aria-required="true" />
           {errors.name && <p style={errorStyle}>{t("required")}</p>}
         </div>
         <div>
           <label style={labelStyle}>{t("phone_label")} *</label>
-          <input {...register("phone")} placeholder={t("phone_placeholder")} type="tel" style={inputStyle} />
+          <input {...register("phone")} placeholder={t("phone_placeholder")} type="tel" style={inputStyle} required aria-required="true" />
           {errors.phone && <p style={errorStyle}>{t("phone_invalid")}</p>}
         </div>
         <div>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { getCategories } from "@/lib/supabase/queries";
+import { SITE_URL } from "@/lib/siteUrl";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import CategoryCard from "@/components/catalog/CategoryCard";
 import CategoryTree from "@/components/catalog/CategoryTree";
@@ -28,8 +29,8 @@ export async function generateMetadata({
     title: t("title"),
     description: "Полный каталог лабораторного и медицинского оборудования — LabTech Казахстан",
     alternates: {
-      canonical: `https://labtech.kz/${locale}/catalog`,
-      languages: { ru: "/ru/catalog", kk: "/kz/catalog", en: "/en/catalog" },
+      canonical: `${SITE_URL}/${locale}/catalog`,
+      languages: { ru: `${SITE_URL}/ru/catalog`, kk: `${SITE_URL}/kz/catalog`, en: `${SITE_URL}/en/catalog` },
     },
   };
 }

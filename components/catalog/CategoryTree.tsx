@@ -37,9 +37,21 @@ function TreeNode({
   const locale = useLocale();
   const hasChildren = node.children && node.children.length > 0;
   const isActive = node.slug === activeSlug;
+  const containsActive = (node: Category & { children?: Category[] }, slug?: string): boolean => {
+    if (!slug) return false;
+    return (node.children ?? []).some(
+      (c) => c.slug === slug || containsActive(c as any, slug)
+    );
+  };
+
   const [open, setOpen] = useState(
-    isActive || node.children?.some((c) => c.slug === activeSlug) || false
+    isActive || containsActive(node, activeSlug) || false
   );
+
+  const paddingLeft = depth === 0 ? 16 : depth === 1 ? 32 : 48;
+  const fontSize = depth === 0 ? 14 : depth === 1 ? 13 : 12;
+  const fontWeight = isActive ? 700 : depth === 0 ? 500 : 400;
+  const color = isActive ? "var(--blue)" : depth === 0 ? "var(--ink)" : depth === 1 ? "#555" : "#777";
 
   return (
     <div style={{ borderBottom: "1px solid #e8e8e8" }}>
@@ -49,11 +61,11 @@ function TreeNode({
           style={{
             flex: 1,
             display: "block",
-            padding: depth === 0 ? "11px 16px" : "9px 16px",
-            paddingLeft: depth === 0 ? 16 : 32,
-            fontSize: depth === 0 ? 14 : 13,
-            fontWeight: isActive ? 700 : depth === 0 ? 500 : 400,
-            color: isActive ? "var(--blue)" : depth === 0 ? "var(--ink)" : "#555",
+            padding: depth === 0 ? "11px 16px" : "8px 16px",
+            paddingLeft,
+            fontSize,
+            fontWeight,
+            color,
             textDecoration: "none",
             background: isActive ? "rgba(0,82,204,0.05)" : "transparent",
             lineHeight: 1.35,

@@ -60,9 +60,9 @@ export default function CallbackForm({ onSuccess }: CallbackFormProps) {
     <div>
       <p style={{ fontSize: 13, color: "var(--gray)", marginBottom: 20, lineHeight: 1.6 }}>{t("subtitle")}</p>
       <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-        <input {...register("name")} placeholder={t("name_placeholder")} style={inputStyle} />
+        <input {...register("name")} placeholder={t("name_placeholder")} style={inputStyle} required aria-required="true" />
         {errors.name && <p style={{ fontSize: 11, color: "#dc2626" }}>Введите имя</p>}
-        <input {...register("phone")} placeholder={t("phone_placeholder")} type="tel" style={inputStyle} />
+        <input {...register("phone")} placeholder={t("phone_placeholder")} type="tel" style={inputStyle} required aria-required="true" />
         {errors.phone && <p style={{ fontSize: 11, color: "#dc2626" }}>Введите телефон</p>}
         <button
           type="submit"

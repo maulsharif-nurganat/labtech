@@ -33,6 +33,7 @@ export default function ProductCard({ product, categorySlug }: ProductCardProps)
             src={product.images[0]}
             alt={product.name ?? product.slug}
             fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 280px"
             style={{ objectFit: "contain", padding: "16px" }}
           />
         ) : (

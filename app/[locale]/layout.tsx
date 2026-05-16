@@ -9,6 +9,7 @@ import Footer from "@/components/layout/Footer";
 import FloatingContact from "@/components/layout/FloatingContact";
 import ScrollToTop from "@/components/layout/ScrollToTop";
 import "../globals.css";
+import { SITE_URL } from "@/lib/siteUrl";
 
 // Body: Roboto (Cyrillic + Latin)
 const roboto = Roboto({
@@ -47,7 +48,7 @@ export async function generateMetadata({
       template: "%s | LabTech",
     },
     description: t("description"),
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://labtech.kz"),
+    metadataBase: new URL(SITE_URL),
     keywords: [
       "лабораторное оборудование Казахстан",
       "медицинское оборудование Алматы",
@@ -58,7 +59,7 @@ export async function generateMetadata({
       "LabTech Казахстан",
       "labtech.kz",
     ],
-    authors: [{ name: "ТОО «LabTech»", url: "https://labtech.kz" }],
+    authors: [{ name: "ТОО «LabTech»", url: SITE_URL }],
     creator: "ТОО «LabTech»",
     publisher: "ТОО «LabTech»",
     category: "Laboratory Equipment",
@@ -72,15 +73,15 @@ export async function generateMetadata({
       siteName: "LabTech",
       title: "LabTech — лабораторное и медицинское оборудование",
       description: t("description"),
-      url: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://labtech.kz"}/${locale}`,
+      url: `${SITE_URL}/${locale}`,
     },
     alternates: {
-      canonical: `https://labtech.kz/${locale}`,
+      canonical: `${SITE_URL}/${locale}`,
       languages: {
-        "ru-KZ": "https://labtech.kz/ru",
-        "kk-KZ": "https://labtech.kz/kz",
-        "en-KZ": "https://labtech.kz/en",
-        "x-default": "https://labtech.kz/ru",
+        "ru-KZ": `${SITE_URL}/ru`,
+        "kk-KZ": `${SITE_URL}/kz`,
+        "en-KZ": `${SITE_URL}/en`,
+        "x-default": `${SITE_URL}/ru`,
       },
     },
     robots: {

@@ -20,6 +20,8 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
             src={images[active]}
             alt={name}
             fill
+            priority        // LCP element — load eagerly, no lazy
+            sizes="(max-width: 1024px) 100vw, 50vw"
             style={{ objectFit: "contain", padding: "32px" }}
           />
         ) : null}

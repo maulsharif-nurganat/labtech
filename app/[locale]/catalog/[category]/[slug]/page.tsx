@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
+import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+import { SITE_URL } from "@/lib/siteUrl";
 import { getProductBySlug, getCategoryBySlug, getProducts, getAllCategorySlugs } from "@/lib/supabase/queries";
 import CATEGORIES from "@/data/categoryTree";
 import Breadcrumb from "@/components/layout/Breadcrumb";
@@ -34,13 +36,14 @@ export async function generateMetadata({
   try {
     product = await getProductBySlug(slug, locale);
   } catch {}
-  const name = product?.name ?? MOCK_PRODUCT.name;
-  const description = product?.description ?? MOCK_PRODUCT.description;
+  if (!product) return { title: "Продукт не найден | LabTech" };
+  const name = product.name;
+  const description = product.description ?? "";
   return {
     title: name,
     description: description.slice(0, 160),
     alternates: {
-      canonical: `https://labtech.kz/${locale}/catalog/${category}/${slug}`,
+      canonical: `${SITE_URL}/${locale}/catalog/${category}/${slug}`,
       languages: {
         ru: `/ru/catalog/${category}/${slug}`,
         kk: `/kz/catalog/${category}/${slug}`,
@@ -55,45 +58,6 @@ export async function generateMetadata({
   };
 }
 
-const MOCK_CATEGORIES = [
-  { slug: "kliniko-diagnosticheskaya", name: "Клинико-диагностическая лаборатория" },
-  { slug: "mikroskopy", name: "Микроскопы" },
-  { slug: "obshchelaboratornoe", name: "Общелабораторное оборудование" },
-  { slug: "reagenty", name: "Реагенты и красители" },
-  { slug: "veterinariya", name: "Ветеринария" },
-  { slug: "chistye-pomeshcheniya", name: "Чистые помещения" },
-  { slug: "laboratornaya-posuda", name: "Лабораторная посуда" },
-  { slug: "nebulayizery", name: "Небулайзеры" },
-];
-
-const MOCK_PRODUCT = {
-  id: "p1",
-  slug: "analizator-1",
-  name: "Гематологический анализатор BC-3000",
-  description: "Полностью автоматический 3-дифференцированный гематологический анализатор для клинической лаборатории. Производительность 60 образцов в час. Совместим с международными стандартами контроля качества.",
-  category_id: "1",
-  price: "По запросу",
-  images: [],
-  specs: [
-    { key: "Производительность", value: "60 образцов/час" },
-    { key: "Объём образца", value: "9 мкл (цельная кровь)" },
-    { key: "Параметры", value: "21 параметр + 3-diff" },
-    { key: "Питание", value: "220V / 50Hz" },
-    { key: "Габариты", value: "360 × 430 × 370 мм" },
-    { key: "Страна производства", value: "Китай" },
-    { key: "Гарантия", value: "12 месяцев" },
-  ],
-  features: [
-    { title: "Высокая точность", text: "Использует метод лазерной дифракции. CV ≤ 1,5% для WBC и RBC." },
-    { title: "Простота эксплуатации", text: "Большой цветной сенсорный экран 10,4'. Автоматическая калибровка." },
-    { title: "Низкий расход реагентов", text: "Встроенная система рециркуляции. Экономия до 30% реагентов." },
-    { title: "Надёжность", text: "MTBF > 5000 часов. Сервисная поддержка на территории Казахстана." },
-  ],
-  is_featured: true,
-  is_active: true,
-  hits: 42,
-  created_at: "",
-};
 
 export default async function ProductPage({
   params,
@@ -104,21 +68,24 @@ export default async function ProductPage({
   setRequestLocale(locale);
   const t = await getTranslations({ locale });
 
-  let product: any = MOCK_PRODUCT;
+  // Fetch product — show 404 if not found
+  const product = await getProductBySlug(slug, locale).catch(() => null);
+  if (!product) notFound();
+
   let categoryData: any = null;
   let relatedProducts: any[] = [];
 
   try {
-    const fetched = await getProductBySlug(slug, locale);
-    if (fetched) product = fetched;
-    categoryData = await getCategoryBySlug(category, locale);
-    const allProducts = await getProducts(product.category_id, locale);
+    const [cat, allProducts] = await Promise.all([
+      getCategoryBySlug(category, locale),
+      getProducts(product.category_id, locale),
+    ]);
+    categoryData = cat;
     relatedProducts = allProducts.filter((p: any) => p.slug !== slug).slice(0, 3);
   } catch {}
 
-  const mockCat = MOCK_CATEGORIES.find((c) => c.slug === category)
-    ?? CATEGORIES.find((c) => c.slug === category);
-  const catName = categoryData?.name ?? mockCat?.name ?? category;
+  const localCat = CATEGORIES.find((c) => c.slug === category);
+  const catName = categoryData?.name ?? localCat?.name ?? category;
   const productName = product.name ?? slug;
 
   const productSchema = {
@@ -126,7 +93,7 @@ export default async function ProductPage({
     "@type": "Product",
     name: productName,
     description: product.description ?? "",
-    url: `https://labtech.kz/${locale}/catalog/${category}/${slug}`,
+    url: `${SITE_URL}/${locale}/catalog/${category}/${slug}`,
     ...(product.images?.[0] ? { image: product.images } : {}),
     offers: {
       "@type": "Offer",

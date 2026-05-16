@@ -1,3 +1,4 @@
+import { SITE_URL } from "@/lib/siteUrl";
 import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
@@ -16,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: t("title"),
     description: t("subtitle"),
-    alternates: { canonical: `https://labtech.kz/${locale}/contacts` },
+    alternates: { canonical: `${SITE_URL}/${locale}/contacts` },
   };
 }
 
@@ -36,7 +37,7 @@ export default async function ContactsPage({ params }: { params: Promise<{ local
     "@context": "https://schema.org",
     "@type": ["LocalBusiness", "MedicalOrganization"],
     name: "ТОО «LabTech»",
-    url: "https://labtech.kz",
+    url: "${SITE_URL}",
     telephone: "+77273277477",
     email: "info@labtech.kz",
     address: {

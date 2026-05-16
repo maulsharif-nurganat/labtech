@@ -45,9 +45,12 @@ export default async function HomePage({
   let featuredProducts: any[] = [];
 
   try {
-    const fetched = await getCategories(locale);
+    const [fetched, featured] = await Promise.all([
+      getCategories(locale),
+      getFeaturedProducts(locale, 6),
+    ]);
     if (fetched.length > 0) categories = fetched.slice(0, 8) as any;
-    featuredProducts = await getFeaturedProducts(locale, 6);
+    featuredProducts = featured;
   } catch {}
 
   const whyItems = [
