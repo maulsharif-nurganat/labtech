@@ -15,21 +15,19 @@ export function generateStaticParams() {
 }
 
 const MOCK_CATEGORIES = [
-  { id: "1", slug: "kliniko-diagnosticheskaya", name: "Клинико-диагностическая лаборатория", parent_id: null, image_url: null, sort_order: 1, is_active: true, created_at: "" },
-  { id: "2", slug: "mikroskopy", name: "Микроскопы", parent_id: null, image_url: null, sort_order: 2, is_active: true, created_at: "" },
-  { id: "3", slug: "obshchelaboratornoe", name: "Общелабораторное оборудование", parent_id: null, image_url: null, sort_order: 3, is_active: true, created_at: "" },
-  { id: "4", slug: "reagenty", name: "Реагенты и красители", parent_id: null, image_url: null, sort_order: 4, is_active: true, created_at: "" },
-  { id: "5", slug: "veterinariya", name: "Ветеринария", parent_id: null, image_url: null, sort_order: 5, is_active: true, created_at: "" },
-  { id: "6", slug: "chistye-pomeshcheniya", name: "Чистые помещения", parent_id: null, image_url: null, sort_order: 6, is_active: true, created_at: "" },
-  { id: "7", slug: "laboratornaya-posuda", name: "Лабораторная посуда", parent_id: null, image_url: null, sort_order: 7, is_active: true, created_at: "" },
-  { id: "8", slug: "nebulayizery", name: "Небулайзеры", parent_id: null, image_url: null, sort_order: 8, is_active: true, created_at: "" },
-  { id: "9", slug: "pcr-diagnostika", name: "ПЦР-диагностика", parent_id: null, image_url: null, sort_order: 9, is_active: true, created_at: "" },
-  { id: "10", slug: "koagulyatsiya", name: "Коагулология", parent_id: null, image_url: null, sort_order: 10, is_active: true, created_at: "" },
-  { id: "11", slug: "immunologiya", name: "Иммунология и серология", parent_id: null, image_url: null, sort_order: 11, is_active: true, created_at: "" },
-  { id: "12", slug: "gematologiya", name: "Гематология", parent_id: null, image_url: null, sort_order: 12, is_active: true, created_at: "" },
-  { id: "13", slug: "biohimiya", name: "Биохимия", parent_id: null, image_url: null, sort_order: 13, is_active: true, created_at: "" },
-  { id: "14", slug: "mikrobiologiya", name: "Микробиология", parent_id: null, image_url: null, sort_order: 14, is_active: true, created_at: "" },
-  { id: "15", slug: "raskhodnye-materialy", name: "Расходные материалы", parent_id: null, image_url: null, sort_order: 15, is_active: true, created_at: "" },
+  { id: "cat-01", slug: "kliniko-diagnosticheskaya-laboratoriya", name: "Клинико-диагностическая лаборатория", parent_id: null, image_url: null, sort_order: 1,  is_active: true, created_at: "" },
+  { id: "cat-02", slug: "mikroskopy",                             name: "Микроскопы",                         parent_id: null, image_url: null, sort_order: 2,  is_active: true, created_at: "" },
+  { id: "cat-03", slug: "obshchelaboratornoe",                    name: "Общелабораторное оборудование",      parent_id: null, image_url: null, sort_order: 3,  is_active: true, created_at: "" },
+  { id: "cat-04", slug: "reagenty-i-krasiteli",                   name: "Реагенты и красители",               parent_id: null, image_url: null, sort_order: 4,  is_active: true, created_at: "" },
+  { id: "cat-05", slug: "veterinariya",                           name: "Ветеринария",                        parent_id: null, image_url: null, sort_order: 5,  is_active: true, created_at: "" },
+  { id: "cat-06", slug: "chistye-pomeshcheniya",                  name: "Чистые помещения",                   parent_id: null, image_url: null, sort_order: 6,  is_active: true, created_at: "" },
+  { id: "cat-07", slug: "laboratornaya-posuda",                   name: "Лабораторная посуда",                parent_id: null, image_url: null, sort_order: 7,  is_active: true, created_at: "" },
+  { id: "cat-08", slug: "nebulayizery",                           name: "Небулайзеры",                        parent_id: null, image_url: null, sort_order: 8,  is_active: true, created_at: "" },
+  { id: "cat-09", slug: "ptsr-laboratoriya",                      name: "ПЦР лаборатория",                    parent_id: null, image_url: null, sort_order: 9,  is_active: true, created_at: "" },
+  { id: "cat-16", slug: "avtomatizatsiya-ptsr-laboratorii",       name: "Автоматизация ПЦР-лаборатории",      parent_id: null, image_url: null, sort_order: 10, is_active: true, created_at: "" },
+  { id: "cat-17", slug: "dezinfitsiruyushchie-sredstva",          name: "Дезинфицирующие средства",           parent_id: null, image_url: null, sort_order: 11, is_active: true, created_at: "" },
+  { id: "cat-18", slug: "diagnostika-diabeta",                    name: "Диагностика диабета",                parent_id: null, image_url: null, sort_order: 12, is_active: true, created_at: "" },
+  { id: "cat-19", slug: "tonometry",                              name: "Тонометры",                          parent_id: null, image_url: null, sort_order: 13, is_active: true, created_at: "" },
 ];
 
 export default async function HomePage({
