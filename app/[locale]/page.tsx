@@ -66,8 +66,9 @@ export default async function HomePage({
   return (
     <>
       {/* Hero */}
-      <section style={{ background: "var(--blue)", color: "white", paddingTop: "100px", paddingBottom: "80px" }} className="px-5 md:px-14">
-        <div style={{ maxWidth: 1400, margin: "0 auto" }}>
+      <section style={{ position: "relative", background: "var(--blue)", backgroundImage: "url('/hero.jpg')", backgroundSize: "cover", backgroundPosition: "center right", color: "white", paddingTop: "100px", paddingBottom: "80px" }} className="px-5 md:px-14">
+        <div style={{ position: "absolute", inset: 0, background: "rgba(10,28,60,0.72)" }} />
+        <div style={{ maxWidth: 1400, margin: "0 auto", position: "relative", zIndex: 1 }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.65)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 20 }}>
             {t("hero.tag")}
           </div>

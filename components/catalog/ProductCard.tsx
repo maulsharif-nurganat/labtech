@@ -40,6 +40,21 @@ export default function ProductCard({ product, categorySlug }: ProductCardProps)
             <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
           </svg>
         )}
+        {/* Watermark */}
+        <img
+          src="/labtech-watermark.png"
+          alt=""
+          aria-hidden
+          style={{
+            position: "absolute",
+            bottom: 8,
+            right: 8,
+            width: 90,
+            opacity: 0.35,
+            pointerEvents: "none",
+            userSelect: "none",
+          }}
+        />
         {product.is_featured && (
           <div style={{ position: "absolute", top: 12, left: 12, background: "var(--blue)", color: "white", fontSize: 10, fontWeight: 700, padding: "4px 10px", letterSpacing: "0.06em", textTransform: "uppercase" }}>
             {t("bestseller")}

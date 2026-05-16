@@ -7,6 +7,7 @@ import { routing } from "@/i18n/routing";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FloatingContact from "@/components/layout/FloatingContact";
+import ScrollToTop from "@/components/layout/ScrollToTop";
 import "../globals.css";
 
 // Body: Roboto (Cyrillic + Latin)
@@ -109,6 +110,7 @@ export default async function LocaleLayout({
           <main className="flex-1">{children}</main>
           <Footer />
           <FloatingContact />
+          <ScrollToTop />
         </NextIntlClientProvider>
       </body>
     </html>
