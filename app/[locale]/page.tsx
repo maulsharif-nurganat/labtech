@@ -7,7 +7,8 @@ import CategoryCard from "@/components/catalog/CategoryCard";
 import ProductCard from "@/components/catalog/ProductCard";
 import ContactSection from "@/components/sections/ContactSection";
 import KazakhstanMap from "@/components/sections/KazakhstanMap";
-import { CheckCircle, Truck, GraduationCap, Wrench } from "lucide-react";
+import { CheckCircle, Truck, GraduationCap, Wrench, ArrowRight } from "lucide-react";
+import HeroSearch from "@/components/sections/HeroSearch";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -73,14 +74,35 @@ export default async function HomePage({
           <h1 style={{ fontFamily: "var(--font-cactus), 'Cactus Classical Serif', serif", fontSize: "clamp(32px, 5vw, 64px)", fontWeight: 700, lineHeight: 1.1, maxWidth: 700, marginBottom: 24, letterSpacing: "-0.01em" }}>
             {t("hero.title")}
           </h1>
-          <p style={{ fontSize: 16, color: "rgba(255,255,255,0.6)", lineHeight: 1.7, maxWidth: 560, marginBottom: 40 }}>
+          <p style={{ fontSize: 16, color: "rgba(255,255,255,0.6)", lineHeight: 1.7, maxWidth: 560, marginBottom: 32 }}>
             {t("hero.subtitle")}
           </p>
+
+          {/* Search */}
+          <HeroSearch />
+
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-            <Link href={`/${locale}/catalog`} className="btn-primary">
+            <Link
+              href={`/${locale}/catalog`}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                background: "white",
+                color: "var(--blue)",
+                fontWeight: 700,
+                fontSize: 13,
+                padding: "14px 28px",
+                textDecoration: "none",
+                letterSpacing: "0.04em",
+                textTransform: "uppercase",
+                transition: "background 0.15s",
+              }}
+            >
               {t("hero.cta_primary")}
+              <ArrowRight size={16} />
             </Link>
-            <Link href={`/${locale}/contacts`} className="btn-outline" style={{ borderColor: "rgba(255,255,255,0.3)", color: "white" }}>
+            <Link href={`/${locale}/contacts`} className="btn-outline" style={{ borderColor: "rgba(255,255,255,0.35)", color: "white" }}>
               {t("hero.cta_secondary")}
             </Link>
             <a

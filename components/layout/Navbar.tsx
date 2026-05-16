@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, Search, Phone, FlaskConical } from "lucide-react";
+import { Menu, X, Phone, FlaskConical } from "lucide-react";
 
 export default function Navbar() {
   const t = useTranslations();
@@ -12,8 +12,6 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [query, setQuery] = useState("");
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -26,15 +24,6 @@ export default function Navbar() {
     const segments = pathname.split("/");
     segments[1] = loc;
     router.push(segments.join("/") || "/");
-  }
-
-  function handleSearch(e: React.FormEvent) {
-    e.preventDefault();
-    if (query.trim()) {
-      router.push(`/${locale}/search?q=${encodeURIComponent(query.trim())}`);
-      setSearchOpen(false);
-      setQuery("");
-    }
   }
 
   const navLinks = [
@@ -107,33 +96,6 @@ export default function Navbar() {
 
         {/* Right controls */}
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          {/* Search */}
-          {searchOpen ? (
-            <form onSubmit={handleSearch} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <input
-                autoFocus
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={t("nav.search_placeholder")}
-                style={{
-                  border: "1.5px solid var(--border)",
-                  padding: "6px 12px",
-                  fontSize: 13,
-                  outline: "none",
-                  width: "min(200px, 40vw)",
-                  fontFamily: "inherit",
-                }}
-              />
-              <button type="button" onClick={() => setSearchOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--gray)" }}>
-                <X size={18} />
-              </button>
-            </form>
-          ) : (
-            <button onClick={() => setSearchOpen(true)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--gray)", display: "flex" }}>
-              <Search size={18} />
-            </button>
-          )}
-
           {/* Phone */}
           <a
             href={`tel:${t("nav.phone").replace(/\s/g, "")}`}
