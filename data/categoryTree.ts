@@ -28,6 +28,8 @@ const CATEGORIES: CatNode[] = [
   { id: "cat-17", slug: "dezinfitsiruyushchie-sredstva",          name: "Дезинфицирующие средства",           parent_id: null, image_url: null, sort_order: 11, is_active: true, created_at: "" },
   { id: "cat-18", slug: "diagnostika-diabeta",                    name: "Диагностика диабета",                parent_id: null, image_url: null, sort_order: 12, is_active: true, created_at: "" },
   { id: "cat-19", slug: "tonometry",                              name: "Тонометры",                          parent_id: null, image_url: null, sort_order: 13, is_active: true, created_at: "" },
+  { id: "cat-20", slug: "biokhimicheskaya-laboratoriya",          name: "Биохимическая лаборатория",          parent_id: null, image_url: null, sort_order: 20, is_active: true, created_at: "" },
+  { id: "cat-21", slug: "ifa-laboratoriya",                       name: "ИФА Лаборатория",                    parent_id: null, image_url: null, sort_order: 21, is_active: true, created_at: "" },
 
   // ── КЛИНИКО-ДИАГНОСТИЧЕСКАЯ ЛАБОРАТОРИЯ ───────────────────────────────────
   { id: "c-01-01", slug: "analizatory-gematologicheskie",          name: "Анализаторы гематологические",        parent_id: "cat-01", image_url: null, sort_order: 1, is_active: true, created_at: "" },
@@ -60,7 +62,7 @@ const CATEGORIES: CatNode[] = [
   { id: "c-07-01", slug: "posuda-iz-stekla",   name: "Посуда из стекла",   parent_id: "cat-07", image_url: null, sort_order: 1, is_active: true, created_at: "" },
   { id: "c-07-02", slug: "posuda-iz-plastika", name: "Посуда из пластика", parent_id: "cat-07", image_url: null, sort_order: 2, is_active: true, created_at: "" },
 
-  // ── ВЕТЕРИНАРИЯ ───────────────────────────────────────────────────────────
+  // ── ВЕТЕРИНАРИЯ ──────────────────────────────────────────────────────────
   { id: "c-13-01", slug: "vet-laboratornoe-oborudovanie",        name: "Лабораторное оборудование",       parent_id: "cat-05", image_url: null, sort_order: 1,  is_active: true, created_at: "" },
   { id: "c-13-02", slug: "vet-funktsionalnoe-oborudovanie",      name: "Функциональное оборудование",     parent_id: "cat-05", image_url: null, sort_order: 2,  is_active: true, created_at: "" },
   { id: "c-13-03", slug: "vet-obshchelaboratornoe",              name: "Общелабораторное оборудование",   parent_id: "cat-05", image_url: null, sort_order: 3,  is_active: true, created_at: "" },

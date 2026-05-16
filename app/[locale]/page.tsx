@@ -28,6 +28,8 @@ const MOCK_CATEGORIES = [
   { id: "cat-17", slug: "dezinfitsiruyushchie-sredstva",          name: "Дезинфицирующие средства",           parent_id: null, image_url: null, sort_order: 11, is_active: true, created_at: "" },
   { id: "cat-18", slug: "diagnostika-diabeta",                    name: "Диагностика диабета",                parent_id: null, image_url: null, sort_order: 12, is_active: true, created_at: "" },
   { id: "cat-19", slug: "tonometry",                              name: "Тонометры",                          parent_id: null, image_url: null, sort_order: 13, is_active: true, created_at: "" },
+  { id: "cat-20", slug: "biokhimicheskaya-laboratoriya",          name: "Биохимическая лаборатория",          parent_id: null, image_url: null, sort_order: 20, is_active: true, created_at: "" },
+  { id: "cat-21", slug: "ifa-laboratoriya",                       name: "ИФА Лаборатория",                    parent_id: null, image_url: null, sort_order: 21, is_active: true, created_at: "" },
 ];
 
 export default async function HomePage({
