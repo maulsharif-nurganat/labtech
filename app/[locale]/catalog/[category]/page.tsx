@@ -8,6 +8,9 @@ import CategoryCard from "@/components/catalog/CategoryCard";
 import CategoryTree from "@/components/catalog/CategoryTree";
 import CATEGORIES from "@/data/categoryTree";
 
+// Re-fetch from Supabase on every request so product/category changes are instant
+export const dynamic = "force-dynamic";
+
 export async function generateStaticParams() {
   const locales = routing.locales;
   // Always include hardcoded category slugs (both parents and subcategories)

@@ -7,6 +7,8 @@ import CategoryCard from "@/components/catalog/CategoryCard";
 import CategoryTree from "@/components/catalog/CategoryTree";
 import CATEGORIES from "@/data/categoryTree";
 
+export const dynamic = "force-dynamic";
+
 // Top-level categories only — for the cards grid
 const TOP_LEVEL = CATEGORIES.filter((c) => c.parent_id === null);
 

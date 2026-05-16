@@ -9,6 +9,8 @@ import SpecsTable from "@/components/catalog/SpecsTable";
 import ProductCard from "@/components/catalog/ProductCard";
 import ProductActions from "@/components/catalog/ProductActions";
 
+export const dynamic = "force-dynamic";
+
 export async function generateStaticParams() {
   const locales = routing.locales;
   try {
